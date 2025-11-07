@@ -1,234 +1,297 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang=en>
-
 <head>
-	<meta charset=utf-8>
-	<meta name=viewport content="width=device-width">
-	<link rel=icon
-		href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🏉</text></svg>"
-		type="image/svg+xml">
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width">
+<link rel=icon href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🏉</text></svg>" type="image/svg+xml">
+<link rel="stylesheet" href="simple.css">
+<title>Inner Melbourne Football League</title>
+<style>
+* {
+	font-variant: no-common-ligatures;
+}
+.flex {
+	display: flex;
+}
+.justify-between {
+	justify-content: space-between;
+}
+.pl-0 {
+	padding-left: 0;
+}
+.tabular-nums {
+	font-variant-numeric: tabular-nums;
+}
+.text-right {
+	text-align: right;	
+}
+.text-center {
+	text-align: center;
+}
+.font-bold {
+	font-weight: 700;
+}
+.overflow-x-auto {
+	overflow-x: auto;
+}
+.border-b-3 {
+	border-bottom-width: 3px;
+}
+@media (prefers-color-scheme: light) {
+	.border-solid {
+		border-style: solid;
+	}
+}
 
-
-	<title>Inner Melbourne Football League</title>
-
-	<!-- <link rel="stylesheet" href="https://fonts.xz.style/serve/inter.css">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css">
-	<link rel="stylesheet" href="https://newcss.net/theme/terminal.css"> -->
-	<link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
-
-
-	<style>
-		label {
-			display: unset;
-		}
-
-		* {
-			font-variant: no-common-ligatures;
-			font-variant-numeric: tabular-nums
-		}
-
-		th.right, 
-		td.right {
-			text-align: right;
-		}
-
-		tr:nth-child(5) th,
-		tr:nth-child(5) td {
-			border-bottom: 3px solid ;
-		}
-		 @media (prefers-color-scheme: dark) {
-			tr:nth-child(5) th,
-			tr:nth-child(5) td {
-				border-bottom: 3px ;
-			}
-		} 
-
-		th[scope=row] {
-			background-color: unset;
-		} 
-
-		.bold {
-			font-weight: bold;
-		}
-
-		.italic {
-			font-style: italic;
-		}
-
-	</style>
+.list-none {
+	list-style-type: none;
+}
+</style>
 </head>
-
 <body>
 
-	<header>
-		<h1>Inner Melbourne Football League 🏉</h1>
-	</header>
+<header>
+	<h1>Inner Melbourne Football League 🏉</h1>
+</header>
 
-	<main id=app>
+<main id=app>
 
-	<p>
-		<label for=yearSelect>Year</label>&ensp;
-		<select v-model="currentYear" title="choose year" id=yearSelect>
-			<option v-for="year in years" :value="year">{{ year }}</option>
+	<div class="flex justify-between">
+		<select v-model=currentYear>
+			<option v-for="y in years">{{ y }}</option>
 		</select>
-	</p>
+		<details><summary>⚙</summary>
+			<input type=checkbox v-model=soft id=smfitz @change=invalidate><label for=smfitz>South Melbourne and Fitzroy</label></details>
+		</details>
+	</div>
+
+	<template v-if="currentYear in seasons">
+		<dl v-for="round, index, i of seasons[currentYear].regular">
+			<dt>Round {{ i + 1 }}</dt>
+			<dd><ul class="list-none pl-0">
+				<li v-for="game in round">
+					<span :class="{ 'font-bold': game.hscore > game.ascore}">{{  game.hteam }} {{  game.hgoals }}.{{  game.hbehinds }}.{{  game.hscore }}</span> vs. <span :class="{ 'font-bold': game.ascore > game.hscore}">{{  game.ateam }} {{  game.agoals }}.{{  game.abehinds }}.{{  game.ascore }}</span>
+				</li>
+			</ul></dd>
+		</dl>
+		<section>
+			<h2>&#x1FA9C; Ladder</h2>
+			<div class=overflow-x-auto>
+				<table>
+					<thead>
+					<tr>
+						<th scope=col></th>
+						<!--<th scope=col>Played</th>-->
+						<th class=text-right scope=col>W</th>
+						<th class=text-right scope=col>L</th>
+						<th class=text-right scope=col>D</th>
+						<th class=text-right scope=col>F</th>
+						<th class=text-right scope=col>A</th>
+						<th class=text-right scope=col>%</th>
+						<th class=text-right scope=col>Pts</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr v-for="t, i in seasons[currentYear].ladder">
+						<th scope=row :class="{'border-b-3': i==(soft ? 4 : 3), 'border-solid': i == (soft ? 4 : 3) }">{{ t.name }}</th>
+						<!--<td class=text-right :class="{'border-b-3': i==(soft ? 4 : 3), 'border-solid': i == (soft ? 4 : 3) }">{{ t.wins + t.losses + t.draws }}</td>-->
+						<td class="text-right tabular-nums" :class="{'border-b-3': i==(soft ? 4 : 3), 'border-solid': i == (soft ? 4 : 3) }">{{ t.wins }}</td>
+						<td class="text-right tabular-nums" :class="{'border-b-3': i==(soft ? 4 : 3), 'border-solid': i == (soft ? 4 : 3) }">{{ t.losses }}</td>
+						<td class="text-right tabular-nums" :class="{'border-b-3': i==(soft ? 4 : 3), 'border-solid': i == (soft ? 4 : 3) }">{{ t.draws }}</td>
+						<td class="text-right tabular-nums" :class="{'border-b-3': i==(soft ? 4 : 3), 'border-solid': i == (soft ? 4 : 3) }">{{ t.for }}</td>
+						<td class="text-right tabular-nums" :class="{'border-b-3': i==(soft ? 4 : 3), 'border-solid': i == (soft ? 4 : 3) }">{{ t.against }}</td>
+						<td class="text-right tabular-nums" :class="{'border-b-3': i==(soft ? 4 : 3), 'border-solid': i == (soft ? 4 : 3) }">{{ (t.for / t.against * 100).toFixed(1) }}</td>
+						<td class="text-right tabular-nums" :class="{'border-b-3': i==(soft ? 4 : 3), 'border-solid': i == (soft ? 4 : 3) }">{{ t.wins * 4 + t.draws * 2 }}</td>
+					</tr> 
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<dl v-for="round, index, i of seasons[currentYear].finals">
+			<dt>Finals Week {{ i + 1 }} <span v-if="i == Object.keys(seasons[currentYear].finals).length-1">🏆</span></dt>
+			<dd><ul class="list-none pl-0">
+				<li v-for="game in round">
+					<span :class="{ 'font-bold': game.hscore > game.ascore}">{{  game.hteam }} {{  game.hgoals }}.{{  game.hbehinds }}.{{  game.hscore }}</span> vs. <span :class="{ 'font-bold': game.ascore > game.hscore}">{{  game.ateam }} {{  game.agoals }}.{{  game.abehinds }}.{{  game.ascore }}</span>
+				</li>
+			</ul></dd>
+		</dl>
+		<div v-if="Object.keys(seasons[currentYear].finals).length == 0">
+			<h2>No finals played</h2>
+		</div>
+	</template>
+	<section>
+		<details><summary>Premiers</summary>
+			<p v-if="soft">
+				1982–1991 as per VFL/AFL<br />
+			</p>
+			<p v-else>
+				1982–1991 as per VFL/AFL<br />
+			</p>
+		</details>
+	</section>
 
 
-	<Season :season="season"></Season>
+</main>
 
-	<p>
-		<input type=checkbox id=southCheck v-model="south"  />&ensp;
-		<label for=southCheck>Show South Melbourne and Fitzroy</label>
-	</p>
-
-	</main>
-
-	<footer>
-		made with ❤️ by W. David Porter
-	</footer>
+<footer>
+	made with ❤ love by David Porter
+</footer>
 
 
-	<!-- <script type=importmap>
+<script type=importmap>
 {
-"imports": {
-"vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
-"season": "./components/season.js",
-"csv": "https://cdn.jsdelivr.net/npm/csv-parse@5.3.0/dist/esm/index.js"
+  "imports": {
+    "vue": "https://unpkg.com/vue@3.5.22/dist/vue.esm-browser.js"
+  },
+  "scopes": {}
 }
-}
-</script> -->
+</script>
 
-	<script type="module">
+<script type=module>
+	import { createApp, ref, watchEffect } from "vue"
 
-		import { createApp, ref, watch } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js" //"vue" 
-		import Season from "./components/season.js" // "season"
-		import { parse } from "https://cdn.jsdelivr.net/npm/csv-parse@5.3.0/dist/esm/index.js" //"csv"
+	
+	createApp({
+		setup() {
+			const currentYear = ref(2025)
+			const years = Array.from({ length: currentYear.value - 1982 + 1 }, (x, i) => i + 1982).reverse()
+			const seasons = ref({})
+			const soft = ref(false)
 
-		createApp({
-			components: {
-				Season
-			},
+			const invalidate = () => seasons.value = {}
 
-			setup() {
+			watchEffect(async () => {
 
-				const season = ref({
-					year: 2022,
-					rounds: [],
-					finals: []
+				if (currentYear.value in seasons.value) {
+					return
+				}
+
+				const url = `https://api.squiggle.com.au?q=games&year=${currentYear.value}`
+				const data = await (await fetch(url)).json()
+				console.log(data)
+	
+				const imposters = ["West Coast", "Greater Western Sydney", "Fremantle", "Adelaide", "Port Adelaide", "Gold Coast"]
+
+				if (!soft.value) {
+					imposters.push("Sydney");
+					imposters.push("Brisbane Lions")
+				}
+				const filteredGames = data.games.filter(game => {
+					return ! (imposters.includes(game.hteam) || imposters.includes(game.ateam))
+				})
+				filteredGames.forEach(game => {
+					if (game.hteam == "Sydney")
+						game.hteam = "South Melbourne"
+					if (game.ateam == "Sydney")
+						game.ateam = "South Melbourne"
+					if (game.hteam == "Brisbane Lions")
+						game.hteam = "Fitzroy"
+					if (game.ateam == "Brisbane Lions")
+						game.ateam = "Fitzroy"
+					if (game.hteam == "Western Bulldogs")
+						game.hteam = "Footscray"
+					if (game.ateam == "Western Bulldogs")
+						game.ateam = "Footscray"
+
+					// delete game.ateamid
+					// delete game.complete
+					// delete game.date
+					// delete game.hteamid
+					// delete game.id
+					// delete game.is_grand_final
+					// delete game.localtime
+					// delete game.roundname
+					// delete game.timestr
+					// delete game.tz
+					// delete game.unixtime
+					// delete game.updated
+					// delete game.venue
+					// delete game.winner
+					// delete game.winnerteamid
+				})
+				const grouped = Object.groupBy(filteredGames, ({is_final}) => is_final == 0 ? "regular" : "finals")
+				grouped.regular = Object.groupBy(grouped.regular, ({round}) => round)
+				if (grouped.finals == undefined)
+					grouped.finals = {}
+				else
+					grouped.finals = Object.groupBy(grouped.finals, ({round}) => round)
+				//seasons.value[data.games[0].year] = filteredGames
+				seasons.value[currentYear.value] = grouped
+
+				// now create a ladder
+				seasons.value[currentYear.value].ladder = []
+				filteredGames.forEach((game) => {
+					if (!seasons.value[currentYear.value].ladder.find(x => x.name==game.hteam)) {
+						// teams need to be initialised
+						seasons.value[currentYear.value].ladder.push({
+							name: game.hteam,
+							wins: 0,
+							draws: 0,
+							losses: 0,
+							for: 0,
+							against: 0
+					})}
+					if (!seasons.value[currentYear.value].ladder.find(x => x.name==game.ateam)) {
+						// teams need to be initialised
+						seasons.value[currentYear.value].ladder.push({
+							name: game.ateam,
+							wins: 0,
+							draws: 0,
+							losses: 0,
+							for: 0,
+							against: 0
+					})}
+
+					// find the home team and update it
+					let team = seasons.value[currentYear.value].ladder.find(x => x.name == game.hteam)
+					if (game.hscore > game.ascore)
+						team.wins++
+					else if (game.hscore < game.ascore)
+						team.losses++	
+					else
+						team.draws++
+					team.for += game.hscore
+					team.against += game.ascore
+					// find the away team and update it
+					team = seasons.value[currentYear.value].ladder.find(x => x.name == game.ateam)
+					if (game.ascore > game.hscore)
+						team.wins++
+					else if (game.ascore < game.hscore)
+						team.losses++
+					else
+						team.draws++
+					team.for += game.ascore
+					team.against += game.hscore
 				})
 
-				const currentYear = ref("")
+				seasons.value[currentYear.value].ladder.sort(function(a, b) {
+					const apoints = (a.wins * 4) + (a.draws * 2)
+					const bpoints = (b.wins * 4) + (b.draws* 2)
+					if (apoints < bpoints)
+						return 1
+					else if (apoints > bpoints)
+						return -1
+					const apercent = a.for / a.against
+					const bpercent = b.for / b.against
+					if (apercent < bpercent)
+						return 1
+					else if (apercent > bpercent)
+						return -1
+					else return 0
+				})
+			})
 
-				let years = ref([])
-
-				const south = ref(false)
-
-				async function getLatestYear() {
-					const response = await fetch("/data/latest.txt")
-					currentYear.value = await response.text()
-					years.value = Array.from({ length: parseInt(currentYear.value) - 1982 + 1 }, (x, i) => i + 1982).reverse()
-				}
-
-				getLatestYear()
-
-				async function changeSeason() {
-					//const vue = this
-					//const response = await fetch(`./data/${currentYear.value}.csv`)
-					// const params = new URLSearchParams()
-					// params.set("apikey", "2OtiWzDGnMCaD5ZbFSuRRsnIMYQ")
-					// params.set("dbowner", "wdporter")
-					// params.set("dbname", "imfl.db")
-					// params.set("sql", btoa(`SELECT * FROM imfl WHERE year=${currentYear.value}`))
-
-					const response = await fetch(`http://api.wdporter.id.au/v2?year=${currentYear.value}`)
-					console.log(response)
-					const raw = JSON.parse(await response.text())
-					let data = []
-					//convert raw data to manageable objects
-					raw.forEach(r => {
-						data.push({
-							year: r[0].Value,
-							roundType: r[1].Value,
-							roundNumber: parseInt(r[2].Value),
-							homeTeam: r[3].Value,
-							homeGoals: parseInt(r[4].Value),
-							homeBehinds: parseInt(r[5].Value),
-							awayTeam: r[6].Value,
-							awayGoals: parseInt(r[7].Value),
-							awayBehinds: parseInt(r[8].Value),
-						})
-					})
-
-					// filter out irrelevant teams
-					data = data.filter(d => {
-						if (!south.value) {
-							if ((d.homeTeam == "South Melbourne" || d.awayTeam == "South Melbourne"))
-									return false
-							if ((d.homeTeam == "Fitzroy" || d.awayTeam == "Fitzroy") && currentYear.value > 1996)
-								return false
-						}
-						return true
-					})
-					// set up a new season
-					season.value = {
-						year: currentYear,
-						rounds: []
-					}
-					// add matches to rounds of the season
-					let currentRoundNumber = 0, previousRoundNumber = 0
-					data.forEach(d => {
-						if (d.roundType != "round")
-							return;
-						if (d.roundNumber != previousRoundNumber) {
-							previousRoundNumber = d.roundNumber
-							++currentRoundNumber
-							season.value.rounds.push({
-								roundNumber: currentRoundNumber,
-								matches: [d]
-							})
-						}
-						else {
-							season.value.rounds.at(-1).matches.push(d)
-						}
-					})
-
-					// add finals matches to season
-					season.value.finals = []
-					let roundNumber = 0
-					data.forEach(d => {
-						if (d.roundType != "finals")
-							return;
-						if (d.roundNumber != previousRoundNumber) {
-							if (d.roundNumber != roundNumber) {
-								++roundNumber
-								season.value.finals[roundNumber - 1] = {
-									roundNumber: d.roundNumber,
-									matches: [d]
-								}
-							}
-							else {
-								season.value.finals[roundNumber - 1].matches.push(d)
-							}
-						}
-					})
-				}
-
-				watch(currentYear, changeSeason)
-				watch(south, changeSeason)
-
-				return {
-					season,
-					years,
-					currentYear,
-					south,
-				}
-			},
-
-
-		}).mount('#app')
-	</script>
+			return {
+				currentYear,
+				years,
+				seasons,
+				soft,
+				invalidate
+			}
+	}
+}).mount(app)
+</script>
 
 
 </body>
-
 </html>
