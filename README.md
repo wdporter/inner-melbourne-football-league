@@ -1,7 +1,7 @@
 # Inner Melbourne Football League
 
-Thank you to the [https://api.squiggle.com.au/](Squiggle API) for data
+Thank you to the [Squiggle API](https://api.squiggle.com.au/) for data
 
-uses [https://vuejs.org/](vue js)
+uses [vue js](https://vuejs.org/)
 
-uses a build from my branch of [https://simplecss.org/](simple.css framework)
+uses a build from my branch of [simple.css framework](https://simplecss.org/)
