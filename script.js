@@ -4,7 +4,7 @@
 	
 	createApp({
 		setup() {
-			const currentYear = ref(2025)
+			const currentYear = ref(new Date().getFullYear())
 			const years = Array.from({ length: currentYear.value - 1982 + 1 }, (x, i) => i + 1982).reverse()
 			const seasons = ref({})
 			const soft = ref(false)
@@ -20,6 +20,12 @@
 				const url = `https://api.squiggle.com.au?q=games&year=${currentYear.value}`
 				const data = await (await fetch(url)).json()
 				console.log(data)
+
+				if (data.games.length == 0) {
+					// we'll naively assume it's early next year and so load the results for previous year.
+					currentYear.value = currentYear.value - 1
+					return;
+				}
 	
 				const imposters = ["West Coast", "Greater Western Sydney", "Fremantle", "Adelaide", "Port Adelaide", "Gold Coast"]
 
