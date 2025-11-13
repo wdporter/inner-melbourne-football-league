@@ -70,20 +70,22 @@
 				</table>
 			</div>
 		</section>
-		<dl v-for="round, index, i of seasons[currentYear].finals">
-			<dt>Finals Week {{ i + 1 }} <span v-if="i == Object.keys(seasons[currentYear].finals).length-1">🏆</span></dt>
-			<dd><ul class="list-none pl-0">
-				<li v-for="game in round">
-					<span :class="{ 'font-bold': game.hscore > game.ascore}">{{  game.hteam }} {{  game.hgoals }}.{{  game.hbehinds }}.{{  game.hscore }}</span> vs. <span :class="{ 'font-bold': game.ascore > game.hscore}">{{  game.ateam }} {{  game.agoals }}.{{  game.abehinds }}.{{  game.ascore }}</span>
-				</li>
-			</ul></dd>
-		</dl>
-		<div v-if="Object.keys(seasons[currentYear].finals).length == 0">
-			<h2>No finals played</h2>
-		</div>
+		<template v-if="hasAnyFinals">
+			<dl v-for="round, index, i of seasons[currentYear].finals">
+				<dt>Finals Week {{ i + 1 }} <span v-if="i == Object.keys(seasons[currentYear].finals).length-1">🏆</span></dt>
+				<dd><ul class="list-none pl-0">
+					<li v-for="game in round">
+						<span :class="{ 'font-bold': game.hscore > game.ascore}">{{  game.hteam }} {{  game.hgoals }}.{{  game.hbehinds }}.{{  game.hscore }}</span> vs. <span :class="{ 'font-bold': game.ascore > game.hscore}">{{  game.ateam }} {{  game.agoals }}.{{  game.abehinds }}.{{  game.ascore }}</span>
+					</li>
+				</ul></dd>
+			</dl>
+			<div v-if="Object.keys(seasons[currentYear].finals).length == 0">
+				<h2>No finals played</h2>
+			</div>
+		</template>
 	</template>
 	<section>
-		<details><summary>Premiers</summary>
+		<details><summary>Past Premiers</summary>
 			1982–1991 as per VFL/AFL<br />
 			<p v-if="soft==true">
 				1992 Geelong<br  />

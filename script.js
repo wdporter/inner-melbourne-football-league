@@ -8,6 +8,7 @@
 			const years = Array.from({ length: currentYear.value - 1982 + 1 }, (x, i) => i + 1982).reverse()
 			const seasons = ref({})
 			const soft = ref(false)
+			const hasAnyFinals = ref(false)
 
 			const invalidate = () => seasons.value = {}
 
@@ -19,13 +20,14 @@
 
 				const url = `https://api.squiggle.com.au?q=games&year=${currentYear.value}`
 				const data = await (await fetch(url)).json()
-				console.log(data)
 
 				if (data.games.length == 0) {
 					// we'll naively assume it's early next year and so load the results for previous year.
 					currentYear.value = currentYear.value - 1
 					return;
 				}
+
+				hasAnyFinals.value = data.games[data.games.length-1].is_final > 0
 	
 				const imposters = ["West Coast", "Greater Western Sydney", "Fremantle", "Adelaide", "Port Adelaide", "Gold Coast"]
 
@@ -143,7 +145,8 @@
 				years,
 				seasons,
 				soft,
-				invalidate
+				invalidate,
+				hasAnyFinals
 			}
 	}
 }).mount(app)
