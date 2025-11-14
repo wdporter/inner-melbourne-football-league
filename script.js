@@ -38,7 +38,7 @@
 				const filteredGames = data.games.filter(game => {
 					return ! (imposters.includes(game.hteam) || imposters.includes(game.ateam))
 				})
-				filteredGames.forEach(game => {
+				for (let game of filteredGames) {
 					if (game.hteam == "Sydney")
 						game.hteam = "South Melbourne"
 					if (game.ateam == "Sydney")
@@ -67,7 +67,7 @@
 					// delete game.venue
 					// delete game.winner
 					// delete game.winnerteamid
-				})
+				}
 				const grouped = Object.groupBy(filteredGames, ({is_final}) => is_final == 0 ? "regular" : "finals")
 				grouped.regular = Object.groupBy(grouped.regular, ({round}) => round)
 				if (grouped.finals == undefined)
@@ -79,7 +79,7 @@
 
 				// now create a ladder
 				seasons.value[currentYear.value].ladder = []
-				filteredGames.forEach((game) => {
+				for (let game of filteredGames)  {
 					if (!seasons.value[currentYear.value].ladder.find(x => x.name==game.hteam)) {
 						// teams need to be initialised
 						seasons.value[currentYear.value].ladder.push({
@@ -121,7 +121,7 @@
 						team.draws++
 					team.for += game.ascore
 					team.against += game.hscore
-				})
+				}
 
 				seasons.value[currentYear.value].ladder.sort(function(a, b) {
 					const apoints = (a.wins * 4) + (a.draws * 2)
